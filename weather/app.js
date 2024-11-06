@@ -29,7 +29,7 @@ function updateWeather(data) {
     console.log(data);
     const {current, current_units} = data;
     const weather_code = current.weather_code;
-    document.getElementById('weather-result').innerHTML = current.temperature_2m + " " + current_units.temperature_2m + "<br><img src='" + descriptions[weather_code]["day"]["image"] + "'>";
+    document.getElementById('weather-result').innerHTML = current.temperature_2m + " " + current_units.temperature_2m + "<br><img src='" + descriptions[weather_code]["day"]["image"] + "'><br>" + descriptions[weather_code]["day"]["description"] ;
 } // updateWeather
   
 // read in descriptions for WMO Weather codes
