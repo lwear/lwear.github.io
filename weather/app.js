@@ -19,6 +19,7 @@ function fetchWeather() {
 } // fetchWeather
 
 function updateWeather(data) {
+    console.log(data);
     document.getElementById('weather-result').innerHTML = data;
 } // updateWeather
   
