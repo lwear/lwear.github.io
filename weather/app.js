@@ -1,49 +1,46 @@
-// app.js
-async function getWeather() {
+let url = "";
+let descriptions = "";
+
+// initialize on page load
+window.onload = function () {
+    fetchDescriptions();
+};
+
+// get weather for a given city
+function getWeather() {
     const city = document.getElementById('city-input').value;
     if (!city) {
         alert("Please enter a city name.");
         return;
     }
+    url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude=-123.397192&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,weather_code,wind_speed_10m,wind_direction_10m&timezone=America%2FLos_Angeles&forecast_days=14`;
     fetchWeather();
 }
 
 // get weather forecast for Victoria
-const url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude=-123.397192&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,weather_code,wind_speed_10m,wind_direction_10m&timezone=America%2FLos_Angeles&forecast_days=14`;
-
 function fetchWeather() {
   fetch(url)
     .then(response => response.json())
-    .then(data => updateWeather(data) 
-    );
+    .then(data => updateWeather(data))
+    .catch(error => console.error("Unable to fetch data:", error));
 } // fetchWeather
 
 function updateWeather(data) {
     console.log(data);
     const {current, current_units} = data;
-    document.getElementById('weather-result').innerHTML = current.temperature_2m + " " + current_units.temperature_2m;
+    const weather_code = current.weather_code;
+    document.getElementById('weather-result').innerHTML = current.temperature_2m + " " + current_units.temperature_2m + "<br><img src='" + descriptions[weather_code]["day"]["image"] + "'>";
 } // updateWeather
   
-    
-   /* try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.cod !== 200) {
-            document.getElementById('weather-result').innerHTML = `Error: ${data.message}`;
-            return;
-        }*/
-        
-       /* const { main, weather, name } = data;
-        const description = weather[0].description;
-        const temp = main.temp;
+// read in descriptions for WMO Weather codes
+function fetchDescriptions() {
+  fetch("descriptions.json")
+    .then(response => response.json())
+    .then(data => setDescriptions(data))
+    .catch(error => console.error("Unable to fetch descriptions :", error));
+} // fetchDescriptions
 
-        document.getElementById('weather-result').innerHTML = `
-            <h2>${name}</h2>
-            <p>${description}</p>
-            <p>Temperature: ${temp}°C</p>
-        `;*/
-  /*  } catch (error) {
-        document.getElementById('weather-result').innerHTML = "Unable to fetch weather data.";
-    }
-}*/
+function setDescriptions(data) {
+    console.log(data);
+    descriptions = data;
+}  // setDescriptions
