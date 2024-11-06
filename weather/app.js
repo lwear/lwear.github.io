@@ -40,7 +40,7 @@ function updateWeather(data) {
             <p>${description}</p>
             <p>Temperature: ${temp}°C</p>
         `;*/
-    } catch (error) {
+  /*  } catch (error) {
         document.getElementById('weather-result').innerHTML = "Unable to fetch weather data.";
     }
-}
+}*/
