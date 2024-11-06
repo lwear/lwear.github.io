@@ -5,18 +5,32 @@ async function getWeather() {
         alert("Please enter a city name.");
         return;
     }
+}
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude=-123.397192&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,weather_code,wind_speed_10m,wind_direction_10m&timezone=America%2FLos_Angeles&forecast_days=14`;
+// get weather forecast for Victoria
+const url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude=-123.397192&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,weather_code,wind_speed_10m,wind_direction_10m&timezone=America%2FLos_Angeles&forecast_days=14`;
 
-    try {
+function fetchWeather() {
+  fetch(url)
+    .then(response => response.json())
+    .then(data => updateWebsite(data) 
+    );
+} // fetchWeather
+
+function updateWeather(data) {
+    document.getElementById('weather-result').innerHTML = "<pre>" + data + "</pre>";
+} // updateWeather
+  
+    
+   /* try {
         const response = await fetch(url);
         const data = await response.json();
         
         if (data.cod !== 200) {
             document.getElementById('weather-result').innerHTML = `Error: ${data.message}`;
             return;
-        }
-         document.getElementById('weather-result').innerHTML = "<pre>" + data + "</pre>";
+        }*/
+        
        /* const { main, weather, name } = data;
         const description = weather[0].description;
         const temp = main.temp;
