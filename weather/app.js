@@ -20,7 +20,8 @@ function fetchWeather() {
 
 function updateWeather(data) {
     console.log(data);
-    document.getElementById('weather-result').innerHTML = data;
+    const {current, current_units} = data;
+    document.getElementById('weather-result').innerHTML = current.temperature_2m + " " + current_units.temperature_2m;
 } // updateWeather
   
     
