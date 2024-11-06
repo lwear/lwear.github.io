@@ -14,7 +14,7 @@ const url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude
 function fetchWeather() {
   fetch(url)
     .then(response => response.json())
-    .then(data => updateWebsite(data) 
+    .then(data => updateWeather(data) 
     );
 } // fetchWeather
 
