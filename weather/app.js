@@ -5,6 +5,7 @@ async function getWeather() {
         alert("Please enter a city name.");
         return;
     }
+    fetchWeather();
 }
 
 // get weather forecast for Victoria
