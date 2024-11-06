@@ -6,8 +6,7 @@ async function getWeather() {
         return;
     }
 
-    const apiKey = 'YOUR_API_KEY';
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude=-123.397192&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,weather_code,wind_speed_10m,wind_direction_10m&timezone=America%2FLos_Angeles&forecast_days=14`;
 
     try {
         const response = await fetch(url);
@@ -17,8 +16,8 @@ async function getWeather() {
             document.getElementById('weather-result').innerHTML = `Error: ${data.message}`;
             return;
         }
-        
-        const { main, weather, name } = data;
+         document.getElementById('weather-result').innerHTML = "<pre>" + data + "</pre>";
+       /* const { main, weather, name } = data;
         const description = weather[0].description;
         const temp = main.temp;
 
@@ -26,7 +25,7 @@ async function getWeather() {
             <h2>${name}</h2>
             <p>${description}</p>
             <p>Temperature: ${temp}°C</p>
-        `;
+        `;*/
     } catch (error) {
         document.getElementById('weather-result').innerHTML = "Unable to fetch weather data.";
     }
