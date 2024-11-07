@@ -13,9 +13,33 @@ function getWeather() {
         alert("Please enter a city name.");
         return;
     }
+
+    fetchLatLong();
     url = `https://api.open-meteo.com/v1/forecast?latitude=48.552392&longitude=-123.397192&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,weather_code,wind_speed_10m,wind_direction_10m&timezone=America%2FLos_Angeles&forecast_days=14`;
     fetchWeather();
 }
+
+// get lat long of search request
+fetchLatLong() {
+    fetch('https://geocode.maps.co/search?q=Victoria+BC')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.length > 0) {
+          const { lat, lon } = data[0]; // Take the first result
+          console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+        } else {
+          console.log('Location not found');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching coordinates:', error);
+      });
+} // fetchLatLong
 
 // get weather forecast for Victoria
 function fetchWeather() {
