@@ -46,3 +46,56 @@ button:hover {
     margin-top: 20px;
     font-size: 18px;
 }
+
+/* Style for the input field */
+#city-input {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px; /* Max width for the input */
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  /* Style for the suggestion list */
+  .suggestions-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-width: 400px; /* Same width as input */
+    background-color: white;
+    position: absolute;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px; /* Maximum height of the suggestion box */
+    overflow-y: auto; /* Scroll if too many results */
+  }
+  
+  /* Style for individual suggestion items */
+  .suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Highlight suggestion on hover */
+  .suggestions-list li:hover {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  /* Remove bottom border from the last item */
+  .suggestions-list li:last-child {
+    border-bottom: none;
+  }
+  
+  /* Add space between input and suggestion list */
+  #city-input + .suggestions-list {
+    margin-top: 5px;
+  }
+  
