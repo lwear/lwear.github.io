@@ -10,12 +10,15 @@ let long = 0;
 // initialize on page load
 window.onload = function () {
 
-    // get descriptions and images for weather codes
-    fetchDescriptions();
+  // get descriptions and images for weather codes
+  fetchDescriptions();
 
-    // Add event listener to the input field
-    document.getElementById('city-input').addEventListener('input', autocomplete);
-    document.getElementById('city-input').setAttribute( "autocomplete", "off" );
+  // Add event listener to the input field
+  document.getElementById('city-input').addEventListener('input', autocomplete2);
+  document.getElementById('city-input').setAttribute("autocomplete", "off");
+
+
+
 };
 
 
@@ -34,13 +37,13 @@ async function fetchDescriptions() {
 
 // get weather for a given city from search field
 function startSearch() {
-   
-    city = document.getElementById('city-input').value;
-    if (!city) {
-        alert("Please enter a city name.");
-        return;
-    }
-    getWeatherForLocation(city);
+
+  city = document.getElementById('city-input').value;
+  if (!city) {
+    alert("Please enter a city name.");
+    return;
+  }
+  getWeatherForLocation(city);
 }
 
 
@@ -97,7 +100,7 @@ async function getWeather(lat, lon, timezone) {
 function displayWeather(weatherData) {
   const { current, current_units } = weatherData;
   const weather_code = current.weather_code;
-  
+
   document.getElementById('weather-result').innerHTML = `
     ${current.temperature_2m} ${current_units.temperature_2m}
     <br>
@@ -119,7 +122,7 @@ let debounceTimer; // used to limit number of requests made to autocomplete api
 
 async function autocomplete() {
   const input = document.getElementById('city-input').value;  // Get the input value
-  
+
   // Only perform the search if the input is at least 3 characters
   if (input.length < 3) {
     return;
@@ -131,7 +134,7 @@ async function autocomplete() {
   // Set a new debounce timer to wait 500ms after the last keystroke
   debounceTimer = setTimeout(async () => {
     // Construct the URL for the LocationIQ Geocoding API (search endpoint)
-    const url = `https://us1.locationiq.com/v1/search.php?key=${locationIQKey}&q=${encodeURIComponent(input)}&format=json&limit=5&tag=place:city,town,municipality&countrycodes=CA`;
+    const url = `https://us1.locationiq.com/v1/search.php?key=${locationIQKey}&q=${encodeURIComponent(input)}&format=json&limit=5&dedupe=1&tag=type:city,town,municipality&countrycodes=CA`;
 
     try {
       // Fetch the data from LocationIQ API
@@ -140,6 +143,7 @@ async function autocomplete() {
         throw new Error('Error fetching autocomplete data');
       }
       const data = await response.json();
+      console.log(data);
 
       // Clear any existing autocomplete suggestions
       const suggestionList = document.getElementById('autocomplete-items');
@@ -163,9 +167,81 @@ async function autocomplete() {
       console.error('Error:', error);
     }
   }, 300);  // 300ms delay after the user stops typing
-}
+} // autocomplete
+
+// this one prioritizes results from US/Canada
+async function autocomplete2() {
+  const query = document.getElementById('city-input').value;  // Get the input value
+
+  // Only perform the search if the input is at least 3 characters
+  if (query.length < 3) {
+    return;
+  }
+
+  // Clear the previous debounce timer if the user is typing quickly
+  clearTimeout(debounceTimer);
+
+  // Set a new debounce timer to wait 500ms after the last keystroke
+  debounceTimer = setTimeout(async () => {
 
 
-  
+    // Fetch primary (Canada/US) results
+    const primaryResponse = await fetch(`https://us1.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&countrycodes=ca,us&dedupe=1&tag=place:city&limit=5&format=json`);
+    const primaryData = await primaryResponse.json();
 
-  
+    // Fetch global results as fallback
+    const globalResponse = await fetch(`https://us1.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&dedupe=1&tag=place:city&limit=5&format=json`);
+    const globalData = await globalResponse.json();
+
+    // Combine results, prioritizing Canada/US
+    const combinedResults = [...primaryData, ...globalData];
+
+    // Remove exact duplicates
+    const uniqueResults = Array.from(new Map(combinedResults.map(item => [item.place_id, item])).values());
+
+    // Clean up display text and filter out low-importance or obscure results if necessary
+    // Process and clean up unique results
+    const cleanedResults = [];
+    for(current of uniqueResults){
+      let obj = {
+          name: current.address.name, 
+          state:current.address.state, 
+          country:current.address.country
+      };
+      cleanedResults.push(obj);
+    }
+
+
+    // Clear any existing autocomplete suggestions
+    const suggestionList = document.getElementById('autocomplete-items');
+    suggestionList.innerHTML = '';
+    
+    // Check if data exists and iterate through the results to display suggestions
+    if (cleanedResults && cleanedResults.length > 0) {
+      cleanedResults.forEach(result => {
+        const suggestionItem = document.createElement('div');
+        let display_name = result.name + ", ";
+        display_name += (result.state) ? result.state + ", " : "";
+        display_name += (result.country) ? result.country : "";
+        suggestionItem.innerHTML = display_name;
+        suggestionItem.addEventListener('click', () => {
+          // Set the input field value when a suggestion is clicked
+          document.getElementById('city-input').value = display_name;
+          // Optionally, trigger further actions like fetching weather for the selected location
+          suggestionList.innerHTML = '';  // Clear suggestions
+        });
+        suggestionList.appendChild(suggestionItem); // Add suggestion to the list
+      });
+    }
+
+
+
+  }, 500);  // 300ms delay after the user stops typing
+
+} // autocomplete
+
+
+
+
+
+
