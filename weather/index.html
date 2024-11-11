@@ -6,16 +6,26 @@
     <title>Weather Forecast App</title>
     <link rel="stylesheet" href="style.css">
     <script src="app2.js"></script>
+    <link rel="icon" type="image/x-icon" href="icons/sun-48.png">
 </head>
 <body>
+   <div id="main">
     <div class="container">
         <h1>Weather Forecast</h1>
         <input type="text" id="city-input" placeholder="Enter city name">
         <button onclick="startSearch()">Get Forecast</button>
         <div class="autocomplete-items" id="autocomplete-items"></div>
-        <div id="weather-result" class="weather-result"></div>
+    </div>
+
+    <div class="container" id="currentWeatherContainer">
+      <div class="weather-result"  id="currentWeather"></div>
+    </div>
+
+    <div class="container" id="forecastContainer">
+        <div class="weather-result"  id="forecastWeather"></div>
     </div>
     
+  </div>  
 
 
   
