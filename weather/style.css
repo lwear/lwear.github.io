@@ -10,14 +10,24 @@ body {
   color: white;
 }
 
+#main{
+  width:600px;
+  position:relative;
+  margin-left:auto;
+  margin-right:auto;
+
+}
+
 .container {
   text-align: center;
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
+  margin-bottom:20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 600px;
+  width: 700px;
   position:relative;  
+
 }
 
 
@@ -37,8 +47,42 @@ button:hover {
 
 .weather-result {
   margin-top: 20px;
-  font-size: 18px;
+  font-size: 1em;
 }
+
+.temp{
+  font-size:3em;
+  font-weight:bold;
+}
+
+.city {
+  width:100px;
+}
+
+#currentWeatherContainer, #forecastContainer {
+  display:none;
+}
+#currentWeather{
+ 
+  position:relative;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.weathericon { 
+  padding-top:0px !important;
+}
+#currentWeather div {
+  display:inline-block;
+  vertical-align:top;
+  padding-left:10px;
+  padding-right:10px;
+}
+#forecastWeather div {
+   font-size:0.8em;
+}
+
+
 
 /* Style for the input field */
 #city-input {
