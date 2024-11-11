@@ -6,6 +6,7 @@ const locationIQKey = 'pk.6f2e275cd0c550039a21742db37051f4';
 let descriptions = "";
 let lat = 0;
 let long = 0;
+let city = "";
 
 // initialize on page load
 window.onload = function () {
@@ -90,7 +91,7 @@ async function getTimezone(lat, lon) {
 
 // Function to get weather data from Open-Meteo
 async function getWeather(lat, lon, timezone) {
-  const weatherUrl = `${openMeteoUrl}?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=${timezone}`;
+  const weatherUrl = `${openMeteoUrl}?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=${timezone}`;
   const response = await fetch(weatherUrl);
   if (!response.ok) throw new Error('Error fetching weather data');
   return await response.json();
@@ -98,23 +99,56 @@ async function getWeather(lat, lon, timezone) {
 
 // Function to display weather data
 function displayWeather(weatherData) {
+  console.log(weatherData);
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { current, current_units } = weatherData;
   const weather_code = current.weather_code;
 
-  document.getElementById('weather-result').innerHTML = `
-    ${current.temperature_2m} ${current_units.temperature_2m}
-    <br>
-    <img src="${descriptions[weather_code].day.image}">
-    <br>
-    ${descriptions[weather_code].day.description}
-  `;
+  // current weather
+  let d = new Date(current.time);
+  let wd = d.getDay();
 
+  let elem = document.getElementById("currentWeather");
+  elem.innerHTML = `
+    <div class="city"><b>${city}</b></div>
+    <div class="weathericon"><img src="${descriptions[weather_code].day.image}"></div>
+    <div><span class="temp">${current.temperature_2m}</span></div><div>${current_units.temperature_2m}</div>
+    </div>
+    <div>${descriptions[weather_code].day.description}<br>Feels ${current.apparent_temperature}</div>
+  `;
+  document.getElementById("currentWeatherContainer").style.display = "block";
+  
+  // forecast
   console.log('Weather for the next 7 days:');
   const { daily } = weatherData;
   daily.time.forEach((date, index) => {
     console.log(`${date}: Max Temp: ${daily.temperature_2m_max[index]}°C, Min Temp: ${daily.temperature_2m_min[index]}°C`);
   });
-}
+
+  elem = document.getElementById("forecastWeather");
+  elem.innerHTML = "";
+  daily.time.forEach((date, index) => {
+    d = new Date(date);
+    wd = d.getDay();
+   // let weekDay = wee
+    let newDiv = document.createElement("div");
+    newDiv.style.display = "inline-block";
+    newDiv.innerHTML += `
+      ${days[wd]}
+      <br>
+      <img src="${descriptions[daily.weather_code[index]].day.image}">
+      <br>
+      <b>${descriptions[daily.weather_code[index]].day.description}</b><br>
+      H: ${daily.temperature_2m_max[index]}°C,<br>L: ${daily.temperature_2m_min[index]}°C
+      `;
+      elem.append(newDiv);
+  });
+
+  
+
+  document.getElementById("forecastContainer").style.display = "block";
+
+} // displayWeather
 
 
 let debounceTimer; // used to limit number of requests made to autocomplete api
@@ -239,9 +273,3 @@ async function autocomplete2() {
   }, 500);  // 300ms delay after the user stops typing
 
 } // autocomplete
-
-
-
-
-
-
