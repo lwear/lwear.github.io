@@ -62,7 +62,7 @@
 	"51":{
 		"day":{
 			"description":"Light Drizzle",
-			"image":"httsp://openweathermap.org/img/wn/09d@2x.png"
+			"image":"https://openweathermap.org/img/wn/09d@2x.png"
 		},
 		"night":{
 			"description":"Light Drizzle",
