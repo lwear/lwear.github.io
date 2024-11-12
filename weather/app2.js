@@ -71,6 +71,7 @@ const states = usStates = [
 let descriptions = "";
 let lat = 0;
 let long = 0;
+let city = "";
 
 // initialize on page load
 window.onload = function () {
@@ -101,7 +102,7 @@ async function fetchDescriptions() {
 // get weather for a given city from search field
 function startSearch() {
 
-  let city = document.getElementById('city-input').value;
+  city = document.getElementById('city-input').value;
   if (!city) {
     alert("Please enter a city name.");
     return;
@@ -171,7 +172,7 @@ function displayWeather(weatherData) {
   // current weather
   let d = new Date(current.time);
   let wd = d.getDay();
-  let location = query.split(", ");  // separate parts of location name
+  let location = city.split(", ");  // separate parts of location name
   console.log(location);  
 
   let elem = document.getElementById("currentWeather");
