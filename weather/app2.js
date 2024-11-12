@@ -106,9 +106,6 @@ function startSearch() {
     alert("Please enter a city name.");
     return;
   }
-  
-/*  location = city.split(", ");  // separate parts of location name
-  console.log(location);  */
     
   getWeatherForLocation(city);
   
@@ -118,7 +115,8 @@ function startSearch() {
 
 // Main function to get weather for a specific location
 async function getWeatherForLocation(query) {
-  
+    location = city.split(", ");  // separate parts of location name
+  console.log(location);  
   try {
     // Get latitude and longitude from LocationIQ based on the search query
     const { lat, lon } = await getLatLon(query);
