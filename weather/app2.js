@@ -71,9 +71,6 @@ const states = usStates = [
 let descriptions = "";
 let lat = 0;
 let long = 0;
-let location;
-
-
 
 // initialize on page load
 window.onload = function () {
@@ -118,7 +115,7 @@ function startSearch() {
 async function getWeatherForLocation(query) {
   
   // process name of location
-  location = query.split(" ");
+  let location = query.split(" ");
     
   try {
     // Get latitude and longitude from LocationIQ based on the search query
