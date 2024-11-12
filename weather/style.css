@@ -55,6 +55,10 @@ button:hover {
   font-weight:bold;
 }
 
+.tempUnits {
+  font-size:0.5em;
+}
+
 .city {
   width:100px;
 }
