@@ -107,8 +107,8 @@ function startSearch() {
     return;
   }
   
-  location = city.split(", ");  // separate parts of location name
-  console.log(location);  
+/*  location = city.split(", ");  // separate parts of location name
+  console.log(location);  */
     
   getWeatherForLocation(city);
   
