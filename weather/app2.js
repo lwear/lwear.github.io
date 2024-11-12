@@ -112,7 +112,7 @@ function displayWeather(weatherData) {
   elem.innerHTML = `
     <div class="city"><b>${city}</b></div>
     <div class="weathericon"><img src="${descriptions[weather_code].day.image}"></div>
-    <div><span class="temp">${current.temperature_2m}</span><sup>${current_units.temperature_2m}</sup></div>
+    <div><span class="temp">${current.temperature_2m}<sup style="font-size:1em">${current_units.temperature_2m}</sup></span></div>
     </div>
     <div>${descriptions[weather_code].day.description}<br>Feels ${current.apparent_temperature}</div>
   `;
