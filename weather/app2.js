@@ -2,11 +2,78 @@
 const openMeteoUrl = 'https://api.open-meteo.com/v1/forecast';
 const locationIQKey = 'pk.6f2e275cd0c550039a21742db37051f4';
 
+// Global Data
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const provinces = [ { name: 'Alberta', abbreviation: 'AB' }, { name: 'British Columbia', abbreviation: 'BC' }, { name: 'Manitoba', abbreviation: 'MB' }, { name: 'New Brunswick', abbreviation: 'NB' }, { name: 'Newfoundland and Labrador', abbreviation: 'NL' }, { name: 'Northwest Territories', abbreviation: 'NT' }, { name: 'Nova Scotia', abbreviation: 'NS' }, { name: 'Nunavut', abbreviation: 'NU' }, { name: 'Ontario', abbreviation: 'ON' }, { name: 'Prince Edward Island', abbreviation: 'PE' }, { name: 'Quebec', abbreviation: 'QC' }, { name: 'Saskatchewan', abbreviation: 'SK' }, { name: 'Yukon Territory', abbreviation: 'YT' } ]
+const states = usStates = [
+    { name: 'ALABAMA', abbreviation: 'AL'},
+    { name: 'ALASKA', abbreviation: 'AK'},
+    { name: 'AMERICAN SAMOA', abbreviation: 'AS'},
+    { name: 'ARIZONA', abbreviation: 'AZ'},
+    { name: 'ARKANSAS', abbreviation: 'AR'},
+    { name: 'CALIFORNIA', abbreviation: 'CA'},
+    { name: 'COLORADO', abbreviation: 'CO'},
+    { name: 'CONNECTICUT', abbreviation: 'CT'},
+    { name: 'DELAWARE', abbreviation: 'DE'},
+    { name: 'DISTRICT OF COLUMBIA', abbreviation: 'DC'},
+    { name: 'FEDERATED STATES OF MICRONESIA', abbreviation: 'FM'},
+    { name: 'FLORIDA', abbreviation: 'FL'},
+    { name: 'GEORGIA', abbreviation: 'GA'},
+    { name: 'GUAM', abbreviation: 'GU'},
+    { name: 'HAWAII', abbreviation: 'HI'},
+    { name: 'IDAHO', abbreviation: 'ID'},
+    { name: 'ILLINOIS', abbreviation: 'IL'},
+    { name: 'INDIANA', abbreviation: 'IN'},
+    { name: 'IOWA', abbreviation: 'IA'},
+    { name: 'KANSAS', abbreviation: 'KS'},
+    { name: 'KENTUCKY', abbreviation: 'KY'},
+    { name: 'LOUISIANA', abbreviation: 'LA'},
+    { name: 'MAINE', abbreviation: 'ME'},
+    { name: 'MARSHALL ISLANDS', abbreviation: 'MH'},
+    { name: 'MARYLAND', abbreviation: 'MD'},
+    { name: 'MASSACHUSETTS', abbreviation: 'MA'},
+    { name: 'MICHIGAN', abbreviation: 'MI'},
+    { name: 'MINNESOTA', abbreviation: 'MN'},
+    { name: 'MISSISSIPPI', abbreviation: 'MS'},
+    { name: 'MISSOURI', abbreviation: 'MO'},
+    { name: 'MONTANA', abbreviation: 'MT'},
+    { name: 'NEBRASKA', abbreviation: 'NE'},
+    { name: 'NEVADA', abbreviation: 'NV'},
+    { name: 'NEW HAMPSHIRE', abbreviation: 'NH'},
+    { name: 'NEW JERSEY', abbreviation: 'NJ'},
+    { name: 'NEW MEXICO', abbreviation: 'NM'},
+    { name: 'NEW YORK', abbreviation: 'NY'},
+    { name: 'NORTH CAROLINA', abbreviation: 'NC'},
+    { name: 'NORTH DAKOTA', abbreviation: 'ND'},
+    { name: 'NORTHERN MARIANA ISLANDS', abbreviation: 'MP'},
+    { name: 'OHIO', abbreviation: 'OH'},
+    { name: 'OKLAHOMA', abbreviation: 'OK'},
+    { name: 'OREGON', abbreviation: 'OR'},
+    { name: 'PALAU', abbreviation: 'PW'},
+    { name: 'PENNSYLVANIA', abbreviation: 'PA'},
+    { name: 'PUERTO RICO', abbreviation: 'PR'},
+    { name: 'RHODE ISLAND', abbreviation: 'RI'},
+    { name: 'SOUTH CAROLINA', abbreviation: 'SC'},
+    { name: 'SOUTH DAKOTA', abbreviation: 'SD'},
+    { name: 'TENNESSEE', abbreviation: 'TN'},
+    { name: 'TEXAS', abbreviation: 'TX'},
+    { name: 'UTAH', abbreviation: 'UT'},
+    { name: 'VERMONT', abbreviation: 'VT'},
+    { name: 'VIRGIN ISLANDS', abbreviation: 'VI'},
+    { name: 'VIRGINIA', abbreviation: 'VA'},
+    { name: 'WASHINGTON', abbreviation: 'WA'},
+    { name: 'WEST VIRGINIA', abbreviation: 'WV'},
+    { name: 'WISCONSIN', abbreviation: 'WI'},
+    { name: 'WYOMING', abbreviation: 'WY' }
+] ;
+
 // Global vars
 let descriptions = "";
 let lat = 0;
 let long = 0;
-let city = "";
+let location;
+
+
 
 // initialize on page load
 window.onload = function () {
@@ -17,8 +84,6 @@ window.onload = function () {
   // Add event listener to the input field
   document.getElementById('city-input').addEventListener('input', autocomplete2);
   document.getElementById('city-input').setAttribute("autocomplete", "off");
-
-
 
 };
 
@@ -39,37 +104,41 @@ async function fetchDescriptions() {
 // get weather for a given city from search field
 function startSearch() {
 
-  city = document.getElementById('city-input').value;
+  let city = document.getElementById('city-input').value;
   if (!city) {
     alert("Please enter a city name.");
     return;
   }
   getWeatherForLocation(city);
-}
+} // startSearch
 
 
 
 // Main function to get weather for a specific location
 async function getWeatherForLocation(query) {
+  
+  // process name of location
+  location = query.split(" ");
+    
   try {
-    // Step 1: Get latitude and longitude from LocationIQ based on the search query
+    // Get latitude and longitude from LocationIQ based on the search query
     const { lat, lon } = await getLatLon(query);
     console.log(`Latitude: ${lat}, Longitude: ${lon}`);
 
-    // Step 2: Get timezone information based on latitude and longitude
+    // Get timezone information based on latitude and longitude
     const timezone = await getTimezone(lat, lon);
     console.log(`Timezone: ${timezone}`);
 
-    // Step 3: Get weather data based on latitude, longitude, and timezone
+    // Get weather data based on latitude, longitude, and timezone
     const weatherData = await getWeather(lat, lon, timezone);
 
-    // Step 4: Display weather data
+    // Display weather data
     displayWeather(weatherData);
 
   } catch (error) {
     console.error('Error:', error);
   }
-}
+} // getWeatherForLocation
 
 // Function to get latitude and longitude from LocationIQ
 async function getLatLon(query) {
@@ -100,7 +169,6 @@ async function getWeather(lat, lon, timezone) {
 // Function to display weather data
 function displayWeather(weatherData) {
   console.log(weatherData);
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const { current, current_units } = weatherData;
   const weather_code = current.weather_code;
 
@@ -109,8 +177,9 @@ function displayWeather(weatherData) {
   let wd = d.getDay();
 
   let elem = document.getElementById("currentWeather");
+
   elem.innerHTML = `
-    <div class="city"><b>${city}</b></div>
+    <div class="city"><b>${location[0]},</b> ${location[1]}</div>
     <div class="weathericon"><img src="${descriptions[weather_code].day.image}"></div>
     <div><span class="temp">${current.temperature_2m}<sup class="tempUnits">${current_units.temperature_2m}</sup></span></div>
     </div>
