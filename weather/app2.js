@@ -115,8 +115,7 @@ function startSearch() {
 
 // Main function to get weather for a specific location
 async function getWeatherForLocation(query) {
-    location = query.split(", ");  // separate parts of location name
-  console.log(location);  
+  
   try {
     // Get latitude and longitude from LocationIQ based on the search query
     const { lat, lon } = await getLatLon(query);
@@ -172,6 +171,8 @@ function displayWeather(weatherData) {
   // current weather
   let d = new Date(current.time);
   let wd = d.getDay();
+  let location = query.split(", ");  // separate parts of location name
+  console.log(location);  
 
   let elem = document.getElementById("currentWeather");
 
