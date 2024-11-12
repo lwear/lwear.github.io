@@ -115,7 +115,7 @@ function startSearch() {
 async function getWeatherForLocation(query) {
   
   // process name of location
-  let location = query.split(" ");
+  global location = query.split(" ");
     
   try {
     // Get latitude and longitude from LocationIQ based on the search query
