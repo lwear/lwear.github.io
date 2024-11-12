@@ -106,8 +106,12 @@ function startSearch() {
     alert("Please enter a city name.");
     return;
   }
-  getWeatherForLocation(city);
+  
   location = city.split(", ");  // separate parts of location name
+  console.log(location);  
+    
+  getWeatherForLocation(city);
+  
 } // startSearch
 
 
