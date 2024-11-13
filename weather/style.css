@@ -57,6 +57,19 @@ button:hover {
   margin-bottom:20px;
 }
 
+.saved{
+  display:inline-block;
+
+  background-color:#eee;
+  border-radius:6px;
+  padding:5px 10px;
+  margin-top:10px;
+  margin-left:5px;
+  margin-right:5px;
+  color:#444;
+
+}
+
 .weather-result {
   margin-top: 20px;
   font-size: 1em;
