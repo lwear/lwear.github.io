@@ -47,6 +47,12 @@ button:hover {
 
 /* Weather Display */
 
+#savedLocations{
+  font-size:0.8em;
+  margin-top:-20px;
+  margin-bottom:20px;
+}
+
 .weather-result {
   margin-top: 20px;
   font-size: 1em;
