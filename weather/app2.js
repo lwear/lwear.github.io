@@ -223,7 +223,7 @@ function displayWeather(weatherData) {
   let elem = document.getElementById("currentWeather");
 
   elem.innerHTML = `
-    <div class="city"><b>${displayName}</b><br><span id="save" onclick="saveLocation('${displayName}')">save</span></div>
+    <div class="city"><b>${displayName}</b><br><div id="save" onclick="saveLocation('${displayName}')"><i class="fa fa-save"></i></div></div>
     <div class="weathericon"><img src="${descriptions[weather_code].day.image}"></div>
     <div><span class="temp">${Math.round(current.temperature_2m)}<sup class="tempUnits">${current_units.temperature_2m}</sup></span></div>
     </div>
