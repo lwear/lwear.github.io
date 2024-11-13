@@ -45,9 +45,19 @@ button:hover {
   background-color: #5848c2;
 }
 
+/* Weather Display */
+
 .weather-result {
   margin-top: 20px;
   font-size: 1em;
+}
+
+.high-low{
+  text-align:left;
+  width:fit-content;
+  margin-left:auto;
+  margin-right:auto;
+  position:relative;
 }
 
 .temp{
@@ -82,7 +92,7 @@ button:hover {
   padding-left:10px;
   padding-right:10px;
 }
-#forecastWeather div {
+#forecastWeather>div {
    font-size:0.8em;
 }
 
