@@ -11,7 +11,8 @@ body {
 }
 
 #main{
-  width:600px;
+  width:80%;
+  min-width:400px;
   position:relative;
   margin-left:auto;
   margin-right:auto;
@@ -25,9 +26,6 @@ body {
   margin-bottom:20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 700px;
-  position:relative;  
-
 }
 
 
@@ -46,6 +44,12 @@ button:hover {
 }
 
 /* Weather Display */
+
+#save {
+  padding-top:10px;
+  font-size:0.8em;
+
+}
 
 #savedLocations{
   font-size:0.8em;
@@ -76,7 +80,8 @@ button:hover {
 }
 
 .city {
-  width:100px;
+  width:200px;
+  font-size:1.3em;
 }
 
 #currentWeatherContainer, #forecastContainer {
@@ -183,4 +188,12 @@ button:hover {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+
+@media only screen and (min-width: 710px) {
+
+  #main {
+   width:700px;  
+  
+  }
 }
