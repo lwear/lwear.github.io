@@ -88,6 +88,9 @@ window.onload = function () {
   // get descriptions and images for weather codes
   fetchDescriptions();
 
+  // show saved locations
+  showSavedLocations();
+
   // Add event listener to the input field
   document.getElementById('city-input').addEventListener('input', autocomplete);
   document.getElementById('city-input').setAttribute("autocomplete", "off");
@@ -198,7 +201,7 @@ function displayWeather(weatherData) {
   let displayName = location[0];
   console.log(location);
   if (location[2] && location[2] == "Canada" || location[2] == "United States of America"){
-    let state;// = statesAndProvinces.find(o => o.name === location[1]);
+    let state;
     for (s of statesAndProvinces){
       console.log(s);
       if (s.name.toLowerCase() == location[1].toLowerCase()) {
@@ -220,7 +223,7 @@ function displayWeather(weatherData) {
   let elem = document.getElementById("currentWeather");
 
   elem.innerHTML = `
-    <div class="city"><b>${displayName}</div>
+    <div class="city"><b>${displayName}</b><br><span id="save" onclick="saveLocation('${displayName}')">save</span></div>
     <div class="weathericon"><img src="${descriptions[weather_code].day.image}"></div>
     <div><span class="temp">${Math.round(current.temperature_2m)}<sup class="tempUnits">${current_units.temperature_2m}</sup></span></div>
     </div>
@@ -340,3 +343,35 @@ async function autocomplete() {
   }, 500);  // 300ms delay after the user stops typing
 
 } // autocomplete
+
+// save location in local storage
+function saveLocation(location){
+  let index = Object.keys(localStorage).length;
+  localStorage.setItem(index, location);
+  console.log(location + " saved at " + index);
+  showSavedLocations();
+
+} // saveLocation
+
+// returns all items in local storage
+function showSavedLocations() {
+
+  let archive = [];
+  let keys = Object.keys(localStorage);
+  let key;
+  let output = "";
+
+  for (key in keys) {
+      output += "<span onclick='getSavedWeather(\"" +  localStorage.getItem(key) + "\")'>" + localStorage.getItem(key) + "</span>&nbsp;&nbsp;";
+      console.log(localStorage.getItem(key));
+  }
+  document.getElementById("savedLocations").innerHTML = output;
+} // getSavedLocations
+
+// gets weather for a saved location
+function getSavedWeather(location){
+     document.getElementById("city-input").value = location;
+     city = location;
+     getWeatherForLocation(location);
+
+} // getSavedWeather
