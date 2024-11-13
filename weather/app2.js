@@ -353,7 +353,7 @@ function saveLocation(location){
 
 } // saveLocation
 
-// returns all items in local storage
+// show locations saved in local storage
 function showSavedLocations() {
 
   let archive = [];
@@ -362,7 +362,7 @@ function showSavedLocations() {
   let output = "";
 
   for (key in keys) {
-      output += "<span onclick='getSavedWeather(\"" +  localStorage.getItem(key) + "\")'>" + localStorage.getItem(key) + "</span>&nbsp;&nbsp;";
+      output += "<div class='saved' onclick='getSavedWeather(\"" +  localStorage.getItem(key) + "\")'>" + localStorage.getItem(key) + "</div>&nbsp;&nbsp;";
       console.log(localStorage.getItem(key));
   }
   document.getElementById("savedLocations").innerHTML = output;
