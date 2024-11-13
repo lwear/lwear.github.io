@@ -1,11 +1,20 @@
+/*  TTD  
+    - get more data (% precipitaiton, amount precip, wind)
+    - hourly
+
+
+*/
+
+
 // Base URL and API keys
 const openMeteoUrl = 'https://api.open-meteo.com/v1/forecast';
 const locationIQKey = 'pk.6f2e275cd0c550039a21742db37051f4';
 
 // Global Data
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const provinces = [ { name: 'Alberta', abbreviation: 'AB' }, { name: 'British Columbia', abbreviation: 'BC' }, { name: 'Manitoba', abbreviation: 'MB' }, { name: 'New Brunswick', abbreviation: 'NB' }, { name: 'Newfoundland and Labrador', abbreviation: 'NL' }, { name: 'Northwest Territories', abbreviation: 'NT' }, { name: 'Nova Scotia', abbreviation: 'NS' }, { name: 'Nunavut', abbreviation: 'NU' }, { name: 'Ontario', abbreviation: 'ON' }, { name: 'Prince Edward Island', abbreviation: 'PE' }, { name: 'Quebec', abbreviation: 'QC' }, { name: 'Saskatchewan', abbreviation: 'SK' }, { name: 'Yukon Territory', abbreviation: 'YT' } ]
-const states = usStates = [
+
+const statesAndProvinces = [
+  { name: 'Alberta', abbreviation: 'AB' }, { name: 'British Columbia', abbreviation: 'BC' }, { name: 'Manitoba', abbreviation: 'MB' }, { name: 'New Brunswick', abbreviation: 'NB' }, { name: 'Newfoundland and Labrador', abbreviation: 'NL' }, { name: 'Northwest Territories', abbreviation: 'NT' }, { name: 'Nova Scotia', abbreviation: 'NS' }, { name: 'Nunavut', abbreviation: 'NU' }, { name: 'Ontario', abbreviation: 'ON' }, { name: 'Prince Edward Island', abbreviation: 'PE' }, { name: 'Quebec', abbreviation: 'QC' }, { name: 'Saskatchewan', abbreviation: 'SK' }, { name: 'Yukon Territory', abbreviation: 'YT' },
     { name: 'ALABAMA', abbreviation: 'AL'},
     { name: 'ALASKA', abbreviation: 'AK'},
     { name: 'AMERICAN SAMOA', abbreviation: 'AS'},
@@ -80,8 +89,15 @@ window.onload = function () {
   fetchDescriptions();
 
   // Add event listener to the input field
-  document.getElementById('city-input').addEventListener('input', autocomplete2);
+  document.getElementById('city-input').addEventListener('input', autocomplete);
   document.getElementById('city-input').setAttribute("autocomplete", "off");
+
+  document.getElementById("city-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("btn").click();
+    }
+  });
 
 };
 
@@ -107,6 +123,10 @@ function startSearch() {
     alert("Please enter a city name.");
     return;
   }
+
+  // Clear any existing autocomplete suggestions
+  const suggestionList = document.getElementById('autocomplete-items');
+  suggestionList.innerHTML = '';
     
   getWeatherForLocation(city);
   
@@ -172,17 +192,39 @@ function displayWeather(weatherData) {
   // current weather
   let d = new Date(current.time);
   let wd = d.getDay();
-  let location = city.split(", ");  // separate parts of location name
-  console.log(location);  
+
+  // get display name for location
+  let location = city.split(", ");  
+  let displayName = location[0];
+  console.log(location);
+  if (location[2] && location[2] == "Canada" || location[2] == "United States of America"){
+    let state;// = statesAndProvinces.find(o => o.name === location[1]);
+    for (s of statesAndProvinces){
+      console.log(s);
+      if (s.name.toLowerCase() == location[1].toLowerCase()) {
+        state = s;
+        break;
+      }
+    }
+    console.log("state");
+    console.log(state);
+    displayName += ", " + state.abbreviation;
+  } else if (location[2]) {
+    displayName += ", " + location[2];
+  } else if (location[1]) {
+    displayName += ", " + location[1]
+  }
+    
+  console.log(displayName); 
 
   let elem = document.getElementById("currentWeather");
 
   elem.innerHTML = `
-    <div class="city"><b>${location[0]},</b> ${location[1]}</div>
+    <div class="city"><b>${displayName}</div>
     <div class="weathericon"><img src="${descriptions[weather_code].day.image}"></div>
-    <div><span class="temp">${current.temperature_2m}<sup class="tempUnits">${current_units.temperature_2m}</sup></span></div>
+    <div><span class="temp">${Math.round(current.temperature_2m)}<sup class="tempUnits">${current_units.temperature_2m}</sup></span></div>
     </div>
-    <div>${descriptions[weather_code].day.description}<br>Feels ${current.apparent_temperature}</div>
+    <div>${descriptions[weather_code].day.description}<br>Feels ${Math.round(current.apparent_temperature)}</div>
   `;
   document.getElementById("currentWeatherContainer").style.display = "block";
   
@@ -190,7 +232,7 @@ function displayWeather(weatherData) {
   console.log('Weather for the next 7 days:');
   const { daily } = weatherData;
   daily.time.forEach((date, index) => {
-    console.log(`${date}: Max Temp: ${daily.temperature_2m_max[index]}°C, Min Temp: ${daily.temperature_2m_min[index]}°C`);
+    console.log(`${date}: Max Temp: ${Math.round(daily.temperature_2m_max[index])}°C, Min Temp: ${Math.round(daily.temperature_2m_min[index])}°C`);
   });
 
   elem = document.getElementById("forecastWeather");
@@ -206,8 +248,9 @@ function displayWeather(weatherData) {
       <br>
       <img src="${descriptions[daily.weather_code[index]].day.image}">
       <br>
-      <b>${descriptions[daily.weather_code[index]].day.description}</b><br>
-      H: ${daily.temperature_2m_max[index]}°C,<br>L: ${daily.temperature_2m_min[index]}°C
+      <b>${descriptions[daily.weather_code[index]].day.description}</b>
+      <div class="high-low">
+      H: ${Math.round(daily.temperature_2m_max[index])}°C<br>L: ${Math.round(daily.temperature_2m_min[index])}°C</div>
       `;
       elem.append(newDiv);
   });
@@ -222,57 +265,10 @@ function displayWeather(weatherData) {
 let debounceTimer; // used to limit number of requests made to autocomplete api
 
 
-async function autocomplete() {
-  const input = document.getElementById('city-input').value;  // Get the input value
-
-  // Only perform the search if the input is at least 3 characters
-  if (input.length < 3) {
-    return;
-  }
-
-  // Clear the previous debounce timer if the user is typing quickly
-  clearTimeout(debounceTimer);
-
-  // Set a new debounce timer to wait 500ms after the last keystroke
-  debounceTimer = setTimeout(async () => {
-    // Construct the URL for the LocationIQ Geocoding API (search endpoint)
-    const url = `https://us1.locationiq.com/v1/search.php?key=${locationIQKey}&q=${encodeURIComponent(input)}&format=json&limit=5&dedupe=1&tag=type:city,town,municipality&countrycodes=CA`;
-
-    try {
-      // Fetch the data from LocationIQ API
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Error fetching autocomplete data');
-      }
-      const data = await response.json();
-      console.log(data);
-
-      // Clear any existing autocomplete suggestions
-      const suggestionList = document.getElementById('autocomplete-items');
-      suggestionList.innerHTML = '';
-
-      // Check if data exists and iterate through the results to display suggestions
-      if (data && data.length > 0) {
-        data.forEach(result => {
-          const suggestionItem = document.createElement('div');
-          suggestionItem.innerHTML = result.display_name; // Display the place name
-          suggestionItem.addEventListener('click', () => {
-            // Set the input field value when a suggestion is clicked
-            document.getElementById('city-input').value = result.display_name;
-            // Optionally, trigger further actions like fetching weather for the selected location
-            suggestionList.innerHTML = '';  // Clear suggestions
-          });
-          suggestionList.appendChild(suggestionItem); // Add suggestion to the list
-        });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }, 300);  // 300ms delay after the user stops typing
-} // autocomplete
 
 // this one prioritizes results from US/Canada
-async function autocomplete2() {
+async function autocomplete() {
+  
   const query = document.getElementById('city-input').value;  // Get the input value
 
   // Only perform the search if the input is at least 3 characters
@@ -285,14 +281,16 @@ async function autocomplete2() {
 
   // Set a new debounce timer to wait 500ms after the last keystroke
   debounceTimer = setTimeout(async () => {
-
+    console.log("autocmplete");
 
     // Fetch primary (Canada/US) results
-    const primaryResponse = await fetch(`https://us1.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&countrycodes=ca,us&dedupe=1&tag=place:city&limit=5&format=json`);
+    //const primaryResponse = await fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&countrycodes=ca,us&dedupe=1&tag=place:city&limit=5&format=json`);
+    const primaryResponse = await fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&countrycodes=ca,us&dedupe=1&limit=5&format=json`);
     const primaryData = await primaryResponse.json();
 
     // Fetch global results as fallback
-    const globalResponse = await fetch(`https://us1.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&dedupe=1&tag=place:city&limit=5&format=json`);
+    //const globalResponse = await fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&dedupe=1&tag=place:city&limit=5&format=json`);
+    const globalResponse = await fetch(`https://api.locationiq.com/v1/autocomplete.php?key=${locationIQKey}&q=${query}&dedupe=1&limit=5&format=json`);
     const globalData = await globalResponse.json();
 
     // Combine results, prioritizing Canada/US
@@ -329,7 +327,8 @@ async function autocomplete2() {
         suggestionItem.addEventListener('click', () => {
           // Set the input field value when a suggestion is clicked
           document.getElementById('city-input').value = display_name;
-          // Optionally, trigger further actions like fetching weather for the selected location
+          // Fetch weather for the selected location
+          startSearch();
           suggestionList.innerHTML = '';  // Clear suggestions
         });
         suggestionList.appendChild(suggestionItem); // Add suggestion to the list
